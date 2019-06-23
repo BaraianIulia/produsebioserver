@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -28,6 +25,8 @@ public class ServiceProduse {
     private RepositoryReducere repositoryReducere;
     @Autowired
     private RepositoryRecenzie repositoryRecenzie;
+    @Autowired
+    private RepositoryClient repositoryClient;
 
     private List<CartProducts> produseCos;
 
@@ -49,6 +48,7 @@ public class ServiceProduse {
         return produses;
     }
 
+    @Transactional
     public void insert(Produse produs) {
 
 
@@ -74,6 +74,7 @@ public class ServiceProduse {
         return produs.get();
     }
 
+    @Transactional
     public void insertCart(CartProducts produsCos) {
         System.out.println(produseCos.toString());
         produseCos.add(produsCos);
@@ -103,7 +104,7 @@ public class ServiceProduse {
         System.out.println("cumpara produs");
         Date date = new Date();
         Float sumaProduse = sumProductsPrice();
-        Chitanta chitanta = new Chitanta(mail, date, sumaProduse, tip);
+        Chitanta chitanta = new Chitanta(mail, date, sumaProduse + 15, tip);
         repositoryChitanta.save(chitanta);
         System.out.println(chitanta.toString());
 
@@ -126,17 +127,19 @@ public class ServiceProduse {
             repositoryProduse.save(produs);
             repositoryDetaliiChitanta.save(detaliiChitanta);
         }
+        if (sumaProduse > 1000) {
+            repositoryClient.addPoint(mail);
+            repositoryClient.addPoint(mail);
+        } else if (sumaProduse > 500) {
+            repositoryClient.addPoint(mail);
+        }
         this.produseCos.clear();
     }
 
+    @Transactional
     public void deleteProductFromCart(int id) {
-        for (CartProducts c : this.produseCos
-        ) {
-            if (c.getProdus().getIdprodus() == id) {
-                produseCos.remove(c);
-            }
-
-        }
+        System.out.println(this.produseCos.size());
+        this.produseCos.removeIf(cartProducts -> cartProducts.getProdus().getIdprodus() == id);
     }
 
     public List<Produse> getTop10Products() {
@@ -165,6 +168,7 @@ public class ServiceProduse {
         return produse;
     }
 
+    @Transactional
     public void setDiscount(Reducere reducere) throws ExceptionIncorrectInput {
 
         List<Reducere> list = repositoryReducere.getReducereByIdProdusAndDates(reducere.getProduse(), reducere.getDataStart(), reducere.getDataFinal());
@@ -175,6 +179,7 @@ public class ServiceProduse {
 
     }
 
+    @Transactional
     public void setStars(Integer starvalue, Integer idprodus, String mail) {
 
         Recenzie recenzie = repositoryRecenzie.getRecenzieByIdprodusAndMail(idprodus, mail);
@@ -266,10 +271,12 @@ public class ServiceProduse {
         return lista;
     }
 
+    @Transactional
     public void deleteProduct(int id) {
         repositoryProduse.deleteById(id);
     }
 
+    @Transactional
     public void chestionar(Recenzie recenzie) {
         Recenzie recenzie1 = repositoryRecenzie.getRecenzieByIdprodusAndMail(recenzie.getIdprodus(), recenzie.getAutor());
         if (recenzie1 == null) {
@@ -279,11 +286,12 @@ public class ServiceProduse {
             recenzie1.setTextRecenzie(recenzie.getTextRecenzie());
             System.out.println(recenzie1);
             repositoryRecenzie.save(recenzie1);
-            System.out.println("se modifica? "+repositoryRecenzie.getOne(recenzie1.getIdrecenzie()));
+            System.out.println("se modifica? " + repositoryRecenzie.getOne(recenzie1.getIdrecenzie()));
         }
 
     }
 
+    @Transactional
     public List<Recenzie> getAllOpinii(Integer idprodus) {
         return repositoryRecenzie.getRecenzieByIdprodus(idprodus);
     }

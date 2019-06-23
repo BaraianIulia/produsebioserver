@@ -9,6 +9,7 @@ import com.aplicatie.magazinbio.repository.RepositoryClient;
 import com.aplicatie.magazinbio.repository.RepositoryFurnizor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +30,7 @@ public class ServiceClienti {
         return repositoryClient.findAll();
     }
 
+
     public Client login(String mail, String parola) throws ExceptionNotFound, SQLException {
 
         Client client = repositoryClient.findClientByMailAndParola(mail, parola);
@@ -48,6 +50,8 @@ public class ServiceClienti {
         return client;
     }
 
+
+    @Transactional
     public void register(RegisterData registerData) throws ExceptionAlreadyExists, SQLException {
 
         System.out.println(repositoryClient.findClientByMail(registerData.getMail()));
@@ -73,6 +77,7 @@ public class ServiceClienti {
     }
 
 
+    @Transactional
     public Client editData(EditData editData) throws ExceptionNotFound, ExceptionAlreadyExists {
         Client client;
         if (editData.getParolaVeche().equals("")) {
@@ -107,6 +112,7 @@ public class ServiceClienti {
         return client;
     }
 
+    @Transactional
     public void editCard(Card card, String mail) {
         Client client = repositoryClient.findClientByMail(mail);
         Card card1 = new Card();

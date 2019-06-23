@@ -66,7 +66,7 @@ public class ControllerProduse {
     }
 
     @PostMapping(path = "/cart/delete")
-    public void deleteProductFromCart(@RequestParam("id") Integer id) {
+    public void deleteProductFromCart(@RequestParam(name = "id") Integer id) {
         System.out.println("incerc sa sterg");
         serviceProduse.deleteProductFromCart(id);
     }
@@ -124,9 +124,10 @@ public class ControllerProduse {
 
     @PostMapping(path = "/delete")
     public void deleteProduct(@RequestParam("id") Integer id) {
-        System.out.println("incerc sa sterg"+ id);
+        System.out.println("incerc sa sterg" + id);
         serviceProduse.deleteProduct(id);
     }
+
     @PostMapping(path = "/chestionar")
     public void chestionar(@RequestBody(required = false) Recenzie recenzie) {
         System.out.println(recenzie);

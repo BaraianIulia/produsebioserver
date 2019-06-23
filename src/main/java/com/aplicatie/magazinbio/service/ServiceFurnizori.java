@@ -9,6 +9,7 @@ import com.aplicatie.magazinbio.model.RegisterData;
 import com.aplicatie.magazinbio.repository.RepositoryFurnizor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -46,6 +47,7 @@ public class ServiceFurnizori {
         return furnizor;
     }
 
+    @Transactional
     public void register(RegisterData registerData) throws ExceptionAlreadyExists, SQLException, IOException {
         System.out.println(repositoryFurnizor.findFurnizorByMail(registerData.getMail()));
         if (repositoryFurnizor.findFurnizorByMail(registerData.getMail()) != null) {
@@ -62,6 +64,7 @@ public class ServiceFurnizori {
 
     }
 
+    @Transactional
     public Furnizor editData(EditData editData) throws ExceptionNotFound, ExceptionAlreadyExists {
         Furnizor furnizor;
         if(editData.getParolaVeche().equals("")){
@@ -99,6 +102,7 @@ public class ServiceFurnizori {
         return furnizor;
     }
 
+    @Transactional
     public void editCodIBAN(String codIBAN, String mail) {
         Furnizor furnizor= repositoryFurnizor.findFurnizorByMail(mail);
         furnizor.setCodiban(codIBAN);

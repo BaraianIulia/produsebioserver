@@ -23,4 +23,7 @@ public interface RepositoryClient extends JpaRepository<Client, Integer> {
 
     @Query("SELECT u FROM Client u WHERE u.mail = ?1 and u.telefon = ?2")
     Client findClientByMailAndTelefon(String mail, String telefon);
+
+    @Query("update Client c set c.puncte = c.puncte + 1 where c.mail = ?1")
+    void addPoint(String mail);
 }

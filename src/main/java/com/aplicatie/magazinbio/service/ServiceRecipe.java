@@ -7,6 +7,7 @@ import com.aplicatie.magazinbio.repository.RepositoryProduse;
 import com.aplicatie.magazinbio.repository.RepositoryRecipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -34,6 +35,7 @@ public class ServiceRecipe {
         return recipes;
     }
 
+    @Transactional
     public void add(Recipe recipe) {
 
         byte[] byteImg = recipe.getPoza().getBytes();

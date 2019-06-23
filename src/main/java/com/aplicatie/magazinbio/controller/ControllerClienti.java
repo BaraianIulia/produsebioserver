@@ -28,6 +28,8 @@ public class ControllerClienti {
     }
 
 
+
+
     @PostMapping(path = "/login", produces = "application/json")
     public Client login(@RequestParam(value = "mail") String mail, @RequestParam(value = "parola") String parola) throws ExceptionNotFound {
 
