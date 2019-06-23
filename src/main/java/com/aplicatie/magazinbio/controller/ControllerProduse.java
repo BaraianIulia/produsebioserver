@@ -1,5 +1,6 @@
 package com.aplicatie.magazinbio.controller;
 
+import com.aplicatie.magazinbio.exception.ExceptionIncorrectInput;
 import com.aplicatie.magazinbio.exception.ExceptionInvalidQuantity;
 import com.aplicatie.magazinbio.exception.ExceptionNotFound;
 import com.aplicatie.magazinbio.model.CartProducts;
@@ -10,19 +11,18 @@ import com.aplicatie.magazinbio.service.ServiceProduse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/products")
+@RequestMapping(path = "/produse")
 public class ControllerProduse {
 
     @Autowired
     private ServiceProduse serviceProduse;
 
     @GetMapping(path = "/", produces = "application/json")
-    public List<Produse> getProduse() {
-        return serviceProduse.getAllProduse();
+    public List<Produse> getProduse(@RequestParam(value = "categorie") String categorie) {
+        return serviceProduse.getAllProduseByCategorie(categorie);
     }
 
     @PostMapping(path = "/insert")
@@ -65,8 +65,8 @@ public class ControllerProduse {
         System.out.println("am adaugat produsul ");
     }
 
-    @DeleteMapping(path = "/cart/delete/{id}")
-    public void deleteProductFromCart(@PathVariable("id") int id) {
+    @PostMapping(path = "/cart/delete")
+    public void deleteProductFromCart(@RequestParam("id") Integer id) {
         System.out.println("incerc sa sterg");
         serviceProduse.deleteProductFromCart(id);
     }
@@ -87,7 +87,7 @@ public class ControllerProduse {
     }
 
     @PostMapping(path = "/set/discount", produces = "application/json")
-    public void setDiscount(@RequestBody(required = false) Reducere reducere) {
+    public void setDiscount(@RequestBody(required = false) Reducere reducere) throws ExceptionIncorrectInput {
 
         System.out.println("pun reducerile mele");
         serviceProduse.setDiscount(reducere);
@@ -114,4 +114,28 @@ public class ControllerProduse {
         return serviceProduse.getDiscount(idprodus);
     }
 
+    @GetMapping(path = "/furnizor", produces = "application/json")
+    public List<Produse> getAllProduseByFurnizor(@RequestParam(name = "mail") String mail) {
+
+        System.out.println("iau recenzia mele");
+        System.out.println(mail);
+        return serviceProduse.getAllProduseByFurnizor(mail);
+    }
+
+    @PostMapping(path = "/delete")
+    public void deleteProduct(@RequestParam("id") Integer id) {
+        System.out.println("incerc sa sterg"+ id);
+        serviceProduse.deleteProduct(id);
+    }
+    @PostMapping(path = "/chestionar")
+    public void chestionar(@RequestBody(required = false) Recenzie recenzie) {
+        System.out.println(recenzie);
+        serviceProduse.chestionar(recenzie);
+    }
+
+    @GetMapping(path = "/opinii", produces = "application/json")
+    public List<Recenzie> getAllOpinii(@RequestParam(name = "idprodus") Integer idprodus) {
+
+        return serviceProduse.getAllOpinii(idprodus);
+    }
 }

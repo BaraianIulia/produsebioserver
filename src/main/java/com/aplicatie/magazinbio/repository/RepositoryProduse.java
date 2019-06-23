@@ -21,4 +21,10 @@ public interface RepositoryProduse extends JpaRepository<Produse, Integer> {
 
     @Query("SELECT p from Produse p WHERE p.mail = ?1 and p.stoc > 0 ")
     List<Produse> getProductByMail(String mail);
+
+    @Query("SELECT p FROM Produse p WHere p.categorie = ?1")
+    List<Produse> findByCategorie(String categorie);
+
+    @Query("SELECT p FROM Produse p WHERE p.mail = ?1")
+    List<Produse> getAllProduseByFurnizor(String mail);
 }

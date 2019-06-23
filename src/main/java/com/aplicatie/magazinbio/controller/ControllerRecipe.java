@@ -1,6 +1,7 @@
 package com.aplicatie.magazinbio.controller;
 
 import com.aplicatie.magazinbio.exception.ExceptionNotFound;
+import com.aplicatie.magazinbio.model.Produse;
 import com.aplicatie.magazinbio.model.Recipe;
 import com.aplicatie.magazinbio.model.RegisterData;
 import com.aplicatie.magazinbio.service.ServiceRecipe;
@@ -31,5 +32,12 @@ public class ControllerRecipe {
 
 
         return serviceRecipe.findRecipe(idrecipe);
+    }
+    @GetMapping(path = "/products", produces = "application/json")
+    public List<Produse> findRecipeProducts(@RequestParam(value = "idrecipe") Integer idrecipe) throws ExceptionNotFound {
+
+
+        System.out.println("produse retete");
+        return serviceRecipe.findRecipeProducts(idrecipe);
     }
 }

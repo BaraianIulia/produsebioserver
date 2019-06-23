@@ -15,4 +15,8 @@ public interface RepositoryRecenzie extends JpaRepository<Recenzie, Integer> {
 
     @Query("select r from Recenzie r where r.idprodus = ?1")
     List<Recenzie> getRecenzieByIdprodus(Integer idprodus);
+
+
+    @Query("select r from Recenzie r where r.idprodus = ?1 and r.textRecenzie is not null")
+    List<Recenzie> getRecenzieByIdprodusAndNoNullDescription(Integer idprodus);
 }

@@ -45,6 +45,8 @@ public class Recenzie {
         this.dataRecenzie= dataRecenzie;
     }
 
+
+
     public Integer getIdrecenzie() {
         return idrecenzie;
     }

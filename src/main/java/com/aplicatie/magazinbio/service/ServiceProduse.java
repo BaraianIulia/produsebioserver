@@ -1,5 +1,6 @@
 package com.aplicatie.magazinbio.service;
 
+import com.aplicatie.magazinbio.exception.ExceptionIncorrectInput;
 import com.aplicatie.magazinbio.exception.ExceptionInvalidQuantity;
 import com.aplicatie.magazinbio.exception.ExceptionNotFound;
 import com.aplicatie.magazinbio.model.*;
@@ -164,8 +165,12 @@ public class ServiceProduse {
         return produse;
     }
 
-    public void setDiscount(Reducere reducere) {
+    public void setDiscount(Reducere reducere) throws ExceptionIncorrectInput {
 
+        List<Reducere> list = repositoryReducere.getReducereByIdProdusAndDates(reducere.getProduse(), reducere.getDataStart(), reducere.getDataFinal());
+        if (list.size() > 0) {
+            throw new ExceptionIncorrectInput("Există reducere deja care se suprapune cu această perioadă.");
+        }
         repositoryReducere.save(reducere);
 
     }
@@ -187,7 +192,7 @@ public class ServiceProduse {
     public Recenzie getRating(Integer idprodus) {
         Float sum = 0f;
         List<Recenzie> recenzii = repositoryRecenzie.getRecenzieByIdprodus(idprodus);
-        if(recenzii.size()==0){
+        if (recenzii.size() == 0) {
             Recenzie recenzie = new Recenzie();
 
             recenzie.setVot(0f);
@@ -205,16 +210,83 @@ public class ServiceProduse {
     }
 
     public Reducere getDiscount(Integer idprodus) {
-        Reducere reducere = repositoryReducere.getReducereByIdProdusAndDate(idprodus,new Date());
+        Reducere reducere = repositoryReducere.getReducereByIdProdusAndDate(idprodus, new Date());
         Reducere reducereNuExista = new Reducere();
         System.out.println("recenzia mea");
         System.out.println(reducere);
-        if(reducere == null){
+        if (reducere == null) {
             reducereNuExista.setProcent(0);
             System.out.println("nu exista");
-            return  reducereNuExista;
+            return reducereNuExista;
         }
         return reducere;
     }
+
+    public List<Produse> getAllProduseByCategorie(String categorie) {
+        List<Produse> lista;
+        String str;
+        if (categorie.equals("toate")) {
+
+            lista = repositoryProduse.findAll();
+            for (Produse p : lista) {
+                if (p.getImagine() != null) {
+                    str = new String(p.getImagine(), StandardCharsets.UTF_8);
+                    p.setPoza(str);
+                }
+            }
+            return lista;
+        }
+        lista = repositoryProduse.findByCategorie(categorie);
+        for (Produse p : lista) {
+            if (p.getImagine() != null) {
+                str = new String(p.getImagine(), StandardCharsets.UTF_8);
+                p.setPoza(str);
+            }
+        }
+        return lista;
+
+
+    }
+
+    public List<Produse> getAllProduseByFurnizor(String mail) {
+
+        String str;
+
+        List<Produse> lista = repositoryProduse.getAllProduseByFurnizor(mail);
+        for (Produse p : lista) {
+            System.out.println(p.getNume());
+            if (p.getImagine() != null) {
+                str = new String(p.getImagine(), StandardCharsets.UTF_8);
+                p.setPoza(str);
+            }
+        }
+        System.out.println("lista produse ceva?");
+        System.out.println(mail);
+
+        return lista;
+    }
+
+    public void deleteProduct(int id) {
+        repositoryProduse.deleteById(id);
+    }
+
+    public void chestionar(Recenzie recenzie) {
+        Recenzie recenzie1 = repositoryRecenzie.getRecenzieByIdprodusAndMail(recenzie.getIdprodus(), recenzie.getAutor());
+        if (recenzie1 == null) {
+            repositoryRecenzie.save(recenzie);
+            System.out.println(recenzie);
+        } else {
+            recenzie1.setTextRecenzie(recenzie.getTextRecenzie());
+            System.out.println(recenzie1);
+            repositoryRecenzie.save(recenzie1);
+            System.out.println("se modifica? "+repositoryRecenzie.getOne(recenzie1.getIdrecenzie()));
+        }
+
+    }
+
+    public List<Recenzie> getAllOpinii(Integer idprodus) {
+        return repositoryRecenzie.getRecenzieByIdprodus(idprodus);
+    }
 }
+
 
